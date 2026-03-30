@@ -15,8 +15,8 @@
     return null;
   }
 
-  if (window.__SYN_LEETCODE_FETCH_PATCH__) return;
-  window.__SYN_LEETCODE_FETCH_PATCH__ = true;
+  if (window.__SYNC_LEETCODE_FETCH_PATCH__) return;
+  window.__SYNC_LEETCODE_FETCH_PATCH__ = true;
 
   const origFetch = window.fetch.bind(window);
 
@@ -60,7 +60,7 @@
             const id = Number(sid);
             window.postMessage(
               {
-                source: 'syn-leetcode',
+                source: 'sync-leetcode',
                 kind: 'submit-id',
                 submissionId: id,
               },
@@ -68,7 +68,7 @@
             );
             try {
               document.dispatchEvent(
-                new CustomEvent('syn-leetcode-submit', {
+                new CustomEvent('sync-leetcode-submit', {
                   bubbles: true,
                   composed: true,
                   detail: { submissionId: id },

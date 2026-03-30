@@ -57,8 +57,68 @@ function parseGithubError(raw) {
   return { friendly, detail: escapeHtml(detail) };
 }
 
+function localDateKey(ts = Date.now()) {
+  const d = new Date(ts);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+const LOCALE_TIME_24H = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+};
+
+function formatLocalDateTime24h(ms) {
+  return new Date(ms).toLocaleString(undefined, LOCALE_TIME_24H);
+}
+
+/** Today’s unique-problem sync counts (local calendar day, same as background). */
+function todaySyncBlock(syncDailyStats) {
+  const dayKey = localDateKey();
+  const row = syncDailyStats?.[dayKey];
+  const easy = row ? Number(row.easy) || 0 : 0;
+  const medium = row ? Number(row.medium) || 0 : 0;
+  const hard = row ? Number(row.hard) || 0 : 0;
+  const other = row ? Number(row.other) || 0 : 0;
+  const total = easy + medium + hard + other;
+  if (total === 0) {
+    return `<div class="today-stats"><div class="today-label">Today</div><div class="today-muted">No problems synced yet today.</div></div>`;
+  }
+  const chips = [];
+  if (easy) chips.push(`<span class="d-easy">${easy} Easy</span>`);
+  if (medium) chips.push(`<span class="d-med">${medium} Medium</span>`);
+  if (hard) chips.push(`<span class="d-hard">${hard} Hard</span>`);
+  if (other) chips.push(`<span class="d-other">${other} unknown</span>`);
+  const glue = ' <span class="today-dot">·</span> ';
+  return `<div class="today-stats"><div class="today-label">Today synced</div><div class="today-chips">${chips.join(
+    glue,
+  )}</div><div class="today-total">${total} unique problem${total === 1 ? '' : 's'}</div></div>`;
+}
+
+function totalSyncBlock(syncLifetimeStats) {
+  const n = Math.max(0, Number(syncLifetimeStats?.count) || 0);
+  return `<div class="today-stats total-alltime"><div class="today-label">Total sync</div><div class="total-sync-value">${n} unique problem${n === 1 ? '' : 's'}</div><div class="today-muted total-sync-hint">All-time · once per problem</div></div>`;
+}
+
 chrome.storage.local
-  .get(['enabled', 'githubOwner', 'githubRepo', 'lastSyncAt', 'lastSyncPath', 'lastSyncOk', 'lastSyncError'])
+  .get([
+    'enabled',
+    'githubOwner',
+    'githubRepo',
+    'lastSyncAt',
+    'lastSyncPath',
+    'lastSyncOk',
+    'lastSyncError',
+    'syncDailyStats',
+    'syncLifetimeStats',
+  ])
   .then((s) => {
     if (s.enabled === false) {
       state.innerHTML = '<p class="hint-muted">Auto-sync is off. Turn it on in settings when you are ready.</p>';
@@ -74,7 +134,7 @@ chrome.storage.local
     let inner = `<div class="repo-pill">${iconRepo}<span>${repo}</span></div>`;
 
     if (s.lastSyncAt) {
-      const t = new Date(s.lastSyncAt).toLocaleString();
+      const t = formatLocalDateTime24h(s.lastSyncAt);
       if (s.lastSyncOk) {
         const path = escapeHtml(s.lastSyncPath || '');
         inner += `<div class="status-block ok">${iconOk}<div><div class="time">Last sync · ${escapeHtml(t)}</div><div class="path">${path}</div></div></div>`;
@@ -85,14 +145,17 @@ chrome.storage.local
     } else {
       inner +=
         '<p class="hint-muted">No sync yet. Solve a problem and get <strong>Accepted</strong>.</p>';
-      inner += '<p id="syn-verify" class="hint-sub">Checking GitHub…</p>';
+      inner += '<p id="sync-verify" class="hint-sub">Checking GitHub…</p>';
     }
+
+    inner += todaySyncBlock(s.syncDailyStats);
+    inner += totalSyncBlock(s.syncLifetimeStats);
 
     state.innerHTML = inner;
 
     if (s.enabled !== false && s.githubOwner && s.githubRepo && !s.lastSyncAt) {
-      chrome.runtime.sendMessage({ type: 'syn-verify-github' }, (resp) => {
-        const line = document.getElementById('syn-verify');
+      chrome.runtime.sendMessage({ type: 'sync-verify-github' }, (resp) => {
+        const line = document.getElementById('sync-verify');
         if (!line) return;
         if (chrome.runtime.lastError) {
           line.textContent = 'Could not check GitHub. Try again or open settings.';

@@ -1,4 +1,4 @@
-const MSG = 'syn-leetcode';
+const MSG = 'sync-leetcode';
 
 /** leetcode.com — legacy list field */
 const GET_SUBMISSIONS_US = `
@@ -81,6 +81,7 @@ query SubmissionDetailsUs($submissionId: Int!) {
       questionFrontendId
       title
       titleSlug
+      difficulty
     }
   }
 }`;
@@ -102,10 +103,11 @@ query SubmissionDetailCn($submissionId: ID!) {
 }`;
 
 const GET_QUESTION_FRONTEND_ID = `
-query SynQuestionFrontendId($titleSlug: String!) {
+query SyncQuestionFrontendId($titleSlug: String!) {
   question(titleSlug: $titleSlug) {
     questionFrontendId
     title
+    difficulty
   }
 }`;
 
@@ -243,6 +245,7 @@ function normalizeCnDetail(raw) {
       questionFrontendId: raw.question?.questionFrontendId,
       title: raw.question?.title,
       titleSlug: raw.question?.titleSlug,
+      difficulty: raw.question?.difficulty,
     },
   };
 }
@@ -250,15 +253,19 @@ function normalizeCnDetail(raw) {
 async function enrichQuestionFrontendId(detail) {
   if (!detail || !detail.question) return detail;
   const slug = detail.question.titleSlug;
-  if (!slug || detail.question.questionFrontendId != null) return detail;
+  if (!slug) return detail;
+  if (detail.question.questionFrontendId != null && detail.question.difficulty != null) return detail;
   try {
     const data = await graphqlRequest(GET_QUESTION_FRONTEND_ID, { titleSlug: slug });
     const q = data?.question;
-    if (q?.questionFrontendId != null) {
+    if (q?.questionFrontendId != null && detail.question.questionFrontendId == null) {
       detail.question.questionFrontendId = q.questionFrontendId;
     }
     if (!detail.question.title && q?.title) {
       detail.question.title = q.title;
+    }
+    if (q?.difficulty != null && detail.question.difficulty == null) {
+      detail.question.difficulty = q.difficulty;
     }
   } catch (_) {
     /* optional */
@@ -322,7 +329,7 @@ async function fetchLatestAcceptedId(questionSlug) {
   return Number(list[0].id);
 }
 
-async function waitForAccepted(submissionId, { maxAttempts = 32, intervalMs = 900 } = {}) {
+async function waitForAccepted(submissionId, { maxAttempts = 40, intervalMs = 550 } = {}) {
   for (let i = 0; i < maxAttempts; i++) {
     const detail = await fetchSubmissionById(submissionId);
     if (!detail) {
@@ -344,7 +351,7 @@ function debouncedSyncBySlug(questionSlug) {
   pendingSlugTimer = setTimeout(() => {
     pendingSlugTimer = null;
     syncBySlug(questionSlug);
-  }, 4500);
+  }, 1800);
 }
 
 async function syncBySlug(questionSlug) {
@@ -356,13 +363,13 @@ async function syncBySlug(questionSlug) {
     const submittedAt = (detail.timestamp || 0) * 1000;
     if (Date.now() - submittedAt > 120000) return;
     lastHandledId = id;
-    if (isCnHost()) await enrichQuestionFrontendId(detail);
+    await enrichQuestionFrontendId(detail);
     chrome.runtime.sendMessage({
-      type: 'syn-push-github',
+      type: 'sync-push-github',
       payload: { detail, questionSlug },
     });
   } catch (e) {
-    console.warn('[SynLeetcode]', e);
+    console.warn('[SyncLeetcode]', e);
   }
 }
 
@@ -374,13 +381,13 @@ async function syncBySubmissionId(submissionId) {
     const submittedAt = (detail.timestamp || 0) * 1000;
     if (Date.now() - submittedAt > 180000) return;
     lastHandledId = submissionId;
-    if (isCnHost()) await enrichQuestionFrontendId(detail);
+    await enrichQuestionFrontendId(detail);
     chrome.runtime.sendMessage({
-      type: 'syn-push-github',
+      type: 'sync-push-github',
       payload: { detail, questionSlug: detail.question?.titleSlug || titleSlugFromPath() },
     });
   } catch (e) {
-    console.warn('[SynLeetcode]', e);
+    console.warn('[SyncLeetcode]', e);
   }
 }
 
@@ -397,13 +404,13 @@ window.addEventListener('message', (event) => {
   onSubmitId(d.submissionId);
 });
 
-document.addEventListener('syn-leetcode-submit', (event) => {
+document.addEventListener('sync-leetcode-submit', (event) => {
   const sid = event.detail && event.detail.submissionId;
   onSubmitId(sid);
 });
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (msg?.type === 'syn-request-sync-slug' && msg.questionSlug) {
+  if (msg?.type === 'sync-request-sync-slug' && msg.questionSlug) {
     debouncedSyncBySlug(msg.questionSlug);
     sendResponse({ ok: true });
     return true;

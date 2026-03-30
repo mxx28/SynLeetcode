@@ -1,5 +1,5 @@
 /**
- * SynLeetcode options page — reads/writes chrome.storage.local.
+ * SyncLeetcode options page — reads/writes chrome.storage.local.
  *
  * Storage keys (must stay in sync with background.js loadSettings):
  * - githubToken     — GitHub PAT (never logged or sent outside GitHub API)

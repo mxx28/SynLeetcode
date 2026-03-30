@@ -63,6 +63,85 @@ function sanitizePathPart(s) {
     .slice(0, 120);
 }
 
+const SYNC_DAILY_STATS_MAX_DAYS = 14;
+
+function localDateKey(ts = Date.now()) {
+  const d = new Date(ts);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function normalizeDifficultyForStats(raw) {
+  const s = String(raw ?? '')
+    .trim()
+    .toLowerCase();
+  if (!s) return null;
+  if (/简单|easy/.test(s)) return 'easy';
+  if (/中等|medium/.test(s)) return 'medium';
+  if (/困难|hard/.test(s)) return 'hard';
+  if (s.includes('easy')) return 'easy';
+  if (s.includes('medium')) return 'medium';
+  if (s.includes('hard')) return 'hard';
+  return null;
+}
+
+function pruneDailyStatsMap(map, maxKeep) {
+  const keys = Object.keys(map).sort();
+  while (keys.length > maxKeep) {
+    delete map[keys.shift()];
+  }
+}
+
+/** One write: today’s difficulty counts + lifetime unique problem count (same key = one problem). */
+async function recordSyncStatsAfterSuccess(question) {
+  const slug = sanitizePathPart(question?.titleSlug || 'unknown');
+  const fid = sanitizePathPart(question?.questionFrontendId || '0');
+  const uniqueKey = `${fid}__${slug}`;
+  const bucket = normalizeDifficultyForStats(question?.difficulty);
+  const dayKey = localDateKey();
+
+  const { syncDailyStats = {}, syncLifetimeStats = {} } = await chrome.storage.local.get([
+    'syncDailyStats',
+    'syncLifetimeStats',
+  ]);
+
+  const nextDaily = { ...syncDailyStats };
+  pruneDailyStatsMap(nextDaily, SYNC_DAILY_STATS_MAX_DAYS);
+
+  const prevDay = nextDaily[dayKey];
+  const day = {
+    easy: Number(prevDay?.easy) || 0,
+    medium: Number(prevDay?.medium) || 0,
+    hard: Number(prevDay?.hard) || 0,
+    other: Number(prevDay?.other) || 0,
+    seen: { ...(prevDay?.seen || {}) },
+  };
+
+  let lifetimeCount = Number(syncLifetimeStats.count) || 0;
+  const lifetimeSeen = { ...(syncLifetimeStats.seen || {}) };
+  if (!lifetimeSeen[uniqueKey]) {
+    lifetimeSeen[uniqueKey] = 1;
+    lifetimeCount += 1;
+  }
+
+  if (!day.seen[uniqueKey]) {
+    day.seen[uniqueKey] = 1;
+    if (bucket === 'easy') day.easy += 1;
+    else if (bucket === 'medium') day.medium += 1;
+    else if (bucket === 'hard') day.hard += 1;
+    else day.other += 1;
+  }
+
+  nextDaily[dayKey] = day;
+
+  await chrome.storage.local.set({
+    syncDailyStats: nextDaily,
+    syncLifetimeStats: { count: lifetimeCount, seen: lifetimeSeen },
+  });
+}
+
 function utf8ToBase64(str) {
   const bytes = new TextEncoder().encode(str);
   let bin = '';
@@ -197,10 +276,12 @@ async function pushSubmission(payload) {
   const ext = extFromLang(detail);
   const relPath = `${cfg.pathPrefix}/${fid}-${slug}.${ext}`;
   const code = detail.code || '';
-  const msg = `SynLeetcode: ${title} (${slug})`;
+  const msg = `SyncLeetcode: ${title} (${slug})`;
 
   const sha = await githubGetFileSha(cfg.token, cfg.owner, cfg.repo, relPath, cfg.branch);
   await githubPutFile(cfg.token, cfg.owner, cfg.repo, relPath, cfg.branch, code, msg, sha);
+
+  await recordSyncStatsAfterSuccess(q);
 
   await chrome.storage.local.set({
     lastSyncAt: Date.now(),
@@ -212,7 +293,7 @@ async function pushSubmission(payload) {
   chrome.notifications.create({
     type: 'basic',
     iconUrl: chrome.runtime.getURL('icons/icon128.png'),
-    title: 'SynLeetcode',
+    title: 'SyncLeetcode',
     message: `Synced: ${relPath}`,
   });
 
@@ -220,7 +301,7 @@ async function pushSubmission(payload) {
 }
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (msg?.type === 'syn-push-github') {
+  if (msg?.type === 'sync-push-github') {
     pushSubmission(msg.payload)
       .then((r) => sendResponse(r))
       .catch((e) => {
@@ -233,14 +314,14 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         chrome.notifications.create({
           type: 'basic',
           iconUrl: chrome.runtime.getURL('icons/icon128.png'),
-          title: 'SynLeetcode sync failed',
+          title: 'SyncLeetcode sync failed',
           message: err.slice(0, 180),
         });
         sendResponse({ ok: false, error: err });
       });
     return true;
   }
-  if (msg?.type === 'syn-verify-github') {
+  if (msg?.type === 'sync-verify-github') {
     loadSettings()
       .then((cfg) => githubVerifyRepoAndBranch(cfg))
       .then(() => sendResponse({ ok: true }))
@@ -271,10 +352,10 @@ chrome.webRequest.onCompleted.addListener(
     if (!slug || details.tabId == null || details.tabId < 0) return;
 
     setTimeout(() => {
-      chrome.tabs.sendMessage(details.tabId, { type: 'syn-request-sync-slug', questionSlug: slug }, () => {
+      chrome.tabs.sendMessage(details.tabId, { type: 'sync-request-sync-slug', questionSlug: slug }, () => {
         void chrome.runtime.lastError;
       });
-    }, 5000);
+    }, 2200);
   },
   {
     urls: [

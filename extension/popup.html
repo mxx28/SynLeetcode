@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>SynLeetcode</title>
+    <title>SyncLeetcode</title>
     <style>
       :root {
         --bg: #eef1f6;
@@ -177,6 +177,83 @@
         font-weight: 600;
       }
 
+      .today-stats {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+        font-size: 11px;
+      }
+
+      .today-label {
+        font-weight: 700;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .today-chips {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 6px;
+        line-height: 1.35;
+      }
+
+      .today-dot {
+        color: var(--border);
+        user-select: none;
+      }
+
+      .today-total {
+        margin-top: 4px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .today-muted {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .d-easy {
+        font-weight: 600;
+        color: #1a7c3e;
+      }
+
+      .d-med {
+        font-weight: 600;
+        color: #b8860b;
+      }
+
+      .d-hard {
+        font-weight: 600;
+        color: var(--err);
+      }
+
+      .d-other {
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .total-alltime {
+        margin-top: 8px;
+        padding-top: 10px;
+      }
+
+      .total-sync-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+
+      .total-sync-hint {
+        margin-top: 4px;
+        font-size: 10px;
+      }
+
       a.settings {
         display: block;
         text-align: center;
@@ -200,7 +277,7 @@
       <header>
         <img src="icons/icon48.png" alt="" width="48" height="48" />
         <div>
-          <h1>SynLeetcode</h1>
+          <h1>SyncLeetcode</h1>
           <p class="tagline">Sync to GitHub when your run is <strong>Accepted</strong> on LeetCode.</p>
         </div>
       </header>

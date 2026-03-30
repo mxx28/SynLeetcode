@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="extension/icons/icon128.png" width="88" height="88" alt="SynLeetcode" />
+<img src="extension/icons/icon128.png" width="88" height="88" alt="SyncLeetcode" />
 
-# SynLeetcode
+# SyncLeetcode
 
 **When your run is Accepted on LeetCode, your code syncs to GitHub.**
 
@@ -12,9 +12,9 @@
 
 ## Introduction
 
-SynLeetcode is a **Chrome extension** that syncs your **Accepted** LeetCode submissions to a GitHub repository you configure—so you can track progress and publish solutions on GitHub.
+SyncLeetcode is a **Chrome extension** that syncs your **Accepted** LeetCode submissions to a GitHub repository you configure—so you can track progress and publish solutions on GitHub.
 
-The idea comes from **[LeetSync](https://github.com/3ba2ii/LeetSync)** and similar tools. Many of those no longer work after LeetCode changed their pages and APIs, and several do not support leetcode.cn. SynLeetcode targets the current sites and works on **leetcode.com** and **leetcode.cn** .
+The idea comes from **[LeetSync](https://github.com/3ba2ii/LeetSync)** and similar tools. Many of those no longer work after LeetCode changed their pages and APIs, and several do not support leetcode.cn. SyncLeetcode targets the current sites and works on **leetcode.com** and **leetcode.cn** .
 
 
 ## What it does

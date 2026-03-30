@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "SynLeetcode",
-  "version": "1.4.0",
+  "name": "SyncLeetcode",
+  "version": "1.4.4",
   "description": "Sync Accepted LeetCode submissions from problem pages to a GitHub repository.",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "SynLeetcode",
+    "default_title": "SyncLeetcode",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
