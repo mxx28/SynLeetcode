@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SynLeetcode — Settings</title>
+    <style>
+      :root {
+        --bg: #e8edf4;
+        --bg-mid: #f2f5f9;
+        --surface: #ffffff;
+        --surface2: #f6f8fb;
+        --border: #d0dae6;
+        --text: #1a2332;
+        --muted: #5a6a7d;
+        --accent: #1a7c3e;
+        --accent-bright: #239650;
+        --danger: #c62828;
+        --radius: 12px;
+        --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      code {
+        font-style: italic;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: var(--font);
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--text);
+        background: linear-gradient(165deg, var(--bg) 0%, var(--bg-mid) 45%, #fafcfd 100%);
+        padding: 28px 18px 48px;
+        color-scheme: light;
+      }
+
+      .wrap {
+        max-width: 520px;
+        margin: 0 auto;
+      }
+
+      /* ----- Header (logo + title) ----- */
+      header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+
+      header img {
+        width: 88px;
+        height: 88px;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(26, 35, 50, 0.12);
+        border: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      header .tagline {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--muted);
+        max-width: 36ch;
+      }
+
+      /* ----- Cards ----- */
+      section.card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px 20px 8px;
+        margin-bottom: 18px;
+        box-shadow: 0 2px 12px rgba(26, 35, 50, 0.06);
+      }
+
+      section.card h2 {
+        margin: 0 0 16px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .field {
+        margin-bottom: 18px;
+      }
+
+      .field-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 6px;
+        color: var(--text);
+      }
+
+      .field-label svg {
+        flex-shrink: 0;
+        opacity: 0.85;
+        color: var(--accent);
+      }
+
+      input[type='text'],
+      input[type='password'] {
+        width: 100%;
+        padding: 8px 11px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface2);
+        color: var(--text);
+        font-size: 12.5px;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+
+      /* PAT looks clearer in monospace without dominating the layout */
+      #githubToken {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 12px;
+        letter-spacing: -0.02em;
+      }
+
+      input::placeholder {
+        color: #8a96a8;
+        font-weight: 400;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(26, 124, 62, 0.15);
+      }
+
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+        line-height: 1.5;
+      }
+
+      .hint code,
+      .hint-list code {
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: #eef2f7;
+        border: 1px solid var(--border);
+        color: #2d3d52;
+      }
+
+      .hint-list {
+        margin: 6px 0 0;
+        padding-left: 1.2rem;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .hint-list li {
+        margin-bottom: 6px;
+      }
+
+      .hint-list li:last-child {
+        margin-bottom: 0;
+      }
+
+      /* ----- Checkboxes ----- */
+      .check-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 14px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--text);
+      }
+
+      .check-row input {
+        margin-top: 3px;
+        accent-color: var(--accent);
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      .check-row .check-icon {
+        flex-shrink: 0;
+        margin-top: 1px;
+        color: var(--accent);
+      }
+
+      .check-row span {
+        flex: 1;
+      }
+
+      /* ----- Save ----- */
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+      }
+
+      button#save {
+        padding: 11px 22px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(180deg, var(--accent-bright) 0%, var(--accent) 100%);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 3px 12px rgba(26, 124, 62, 0.28);
+      }
+
+      button#save:hover {
+        filter: brightness(1.08);
+      }
+
+      #status {
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      #status.ok {
+        color: var(--accent);
+      }
+
+      #status.err {
+        color: var(--danger);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- App branding: uses extension package icon -->
+      <header>
+        <img src="icons/icon128.png" alt="SynLeetcode" />
+        <div>
+          <h1>SynLeetcode</h1>
+          <p class="tagline">Pushes your code to GitHub when a submission is <strong>Accepted</strong> on leetcode or leetcode.cn.</p>
+        </div>
+      </header>
+
+      <!-- Personal access token + permissions (stored in chrome.storage.local as githubToken) -->
+      <section class="card" aria-labelledby="sec-token">
+        <h2 id="sec-token">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          GitHub access
+        </h2>
+
+        <div class="field">
+          <label class="field-label" for="githubToken">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M15 7a2 2 0 0 1 2 2m4 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0z" />
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            </svg>
+            Personal Access Token (PAT)
+          </label>
+          <input id="githubToken" type="password" autocomplete="off" placeholder="ghp_… or fine-grained token" />
+          <p class="hint">
+            Create at <strong>GitHub → Settings → Developer settings → Personal access tokens</strong>.
+          </p>
+          <ul class="hint-list">
+            <li>
+              Classic: enable <code>repo</code> (or <code>public_repo</code> for public repos only).
+            </li>
+            <li>
+              Fine-grained: Contents: Read and write on the repository you use below.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Target repository: owner + repo name + branch (githubOwner, githubRepo, githubBranch) -->
+      <section class="card" aria-labelledby="sec-target">
+        <h2 id="sec-target">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          Target repository
+        </h2>
+        <p class="hint" style="margin: -8px 0 16px">
+          <strong>Create the repository on GitHub first</strong> (empty repo is fine), then enter its owner and name
+          here. This extension does not create repos for you.
+        </p>
+
+        <div class="field">
+          <label class="field-label" for="githubOwner">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Owner (username or organization)
+          </label>
+          <input id="githubOwner" type="text" placeholder="e.g. octocat" autocomplete="username" />
+          <p class="hint">The <code>OWNER</code> in <code>github.com/OWNER/repo</code>.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="githubRepo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <ellipse cx="12" cy="12" rx="10" ry="4" />
+              <path d="M2 12v4c0 2.2 4.5 4 10 4s10-1.8 10-4v-4" />
+              <path d="M2 8v4c0 2.2 4.5 4 10 4s10-1.8 10-4V8" />
+            </svg>
+            Repository name
+          </label>
+          <input id="githubRepo" type="text" placeholder="e.g. leetcode" autocomplete="off" />
+          <p class="hint">Same name as on GitHub — the <code>repo</code> part of <code>github.com/owner/repo</code>.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="githubBranch">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="6" y1="3" x2="6" y2="15" />
+              <circle cx="18" cy="6" r="3" />
+              <circle cx="6" cy="18" r="3" />
+              <path d="M18 9a9 9 0 0 1-9 9" />
+            </svg>
+            Branch
+          </label>
+          <input id="githubBranch" type="text" placeholder="main" autocomplete="off" />
+          <p class="hint">Must already exist (often <code>main</code>).</p>
+        </div>
+      </section>
+
+      <!-- pathPrefix: folder inside repo root for solution files -->
+      <section class="card" aria-labelledby="sec-files">
+        <h2 id="sec-files">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4l2 3h12a2 2 0 0 1 2 2v11z" />
+          </svg>
+          Files inside the repo
+        </h2>
+
+        <div class="field">
+          <label class="field-label" for="pathPrefix">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z" />
+            </svg>
+            Path prefix (folder under repo root)
+          </label>
+          <input id="pathPrefix" type="text" placeholder="leetcode" autocomplete="off" />
+          <p class="hint">Subfolder under repo root, e.g. <code>python</code> → <code>python/1-two-sum.py</code>.</p>
+        </div>
+      </section>
+
+      <!-- enabled: background skips push when false -->
+      <section class="card" aria-labelledby="sec-behavior">
+        <h2 id="sec-behavior">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          Behavior
+        </h2>
+        <label class="check-row">
+          <input id="enabled" type="checkbox" checked />
+          <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
+          <span><strong>Automatic sync</strong> — push to GitHub on Accepted.</span>
+        </label>
+      </section>
+
+      <div class="actions">
+        <button type="button" id="save">Save settings</button>
+        <div id="status" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

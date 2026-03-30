@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SynLeetcode</title>
+    <style>
+      :root {
+        --bg: #eef1f6;
+        --card: #ffffff;
+        --border: #d0dae6;
+        --text: #1a2332;
+        --muted: #5a6a7d;
+        --accent: #1a7c3e;
+        --accent-soft: rgba(26, 124, 62, 0.1);
+        --err: #9b1c1c;
+        --err-bg: #fdf2f2;
+        --ok: #1a7c3e;
+        --ok-bg: #f0faf3;
+        --radius: 10px;
+        --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 300px;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font);
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--text);
+        background: var(--bg);
+        color-scheme: light;
+      }
+
+      .shell {
+        padding: 14px 14px 16px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      header img {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .tagline {
+        margin: 2px 0 0;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 12px 10px;
+        box-shadow: 0 1px 8px rgba(26, 35, 50, 0.06);
+        margin-bottom: 12px;
+      }
+
+      .repo-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+        background: var(--accent-soft);
+        padding: 6px 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        max-width: 100%;
+        word-break: break-all;
+      }
+
+      .repo-pill svg {
+        flex-shrink: 0;
+        color: var(--accent);
+      }
+
+      .status-block {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+
+      .status-block svg {
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .status-block.ok {
+        background: var(--ok-bg);
+        color: var(--ok);
+        border: 1px solid rgba(26, 124, 62, 0.2);
+      }
+
+      .status-block.err {
+        background: var(--err-bg);
+        color: var(--err);
+        border: 1px solid rgba(155, 28, 28, 0.2);
+      }
+
+      .status-block .time {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .status-block .path {
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 11px;
+        opacity: 0.9;
+        word-break: break-all;
+      }
+
+      .status-block .friendly {
+        font-weight: 600;
+        margin-bottom: 6px;
+        line-height: 1.35;
+      }
+
+      .status-block .detail {
+        font-size: 10px;
+        font-family: ui-monospace, Menlo, monospace;
+        opacity: 0.85;
+        word-break: break-word;
+        line-height: 1.35;
+        max-height: 4.2em;
+        overflow: hidden;
+      }
+
+      .hint-muted {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+
+      .hint-sub {
+        font-size: 10px;
+        color: var(--muted);
+        margin: 8px 0 0;
+        line-height: 1.35;
+        opacity: 0.92;
+      }
+
+      .hint-warn {
+        font-size: 12px;
+        color: var(--err);
+        line-height: 1.4;
+      }
+
+      .hint-below {
+        margin-top: 8px;
+        font-weight: 600;
+      }
+
+      a.settings {
+        display: block;
+        text-align: center;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #239650 0%, var(--accent) 100%);
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 12px;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(26, 124, 62, 0.25);
+      }
+
+      a.settings:hover {
+        filter: brightness(1.06);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <img src="icons/icon48.png" alt="" width="48" height="48" />
+        <div>
+          <h1>SynLeetcode</h1>
+          <p class="tagline">Sync to GitHub when your run is <strong>Accepted</strong> on LeetCode.</p>
+        </div>
+      </header>
+
+      <div class="card" id="card">
+        <div id="state"></div>
+      </div>
+
+      <a href="#" class="settings" id="openOptions">Open settings</a>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

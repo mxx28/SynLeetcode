@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "SynLeetcode",
+  "version": "1.4.0",
+  "description": "Sync Accepted LeetCode submissions from problem pages to a GitHub repository.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SynLeetcode",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage", "webRequest", "notifications"],
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://leetcode.cn/*",
+    "https://*.lingkou.xyz/*",
+    "https://lingkou.xyz/*",
+    "https://api.github.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://leetcode.com/problems/*",
+        "https://leetcode.cn/problems/*",
+        "https://*.lingkou.xyz/problems/*",
+        "https://lingkou.xyz/problems/*"
+      ],
+      "js": ["inject-main.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://leetcode.com/problems/*",
+        "https://leetcode.cn/problems/*",
+        "https://*.lingkou.xyz/problems/*",
+        "https://lingkou.xyz/problems/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "world": "ISOLATED"
+    }
+  ]
+}
