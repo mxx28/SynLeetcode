@@ -18,6 +18,9 @@ SyncLeetcode is a **Chrome extension** that syncs your **Accepted** LeetCode sub
 
 The idea comes from **[LeetSync](https://github.com/3ba2ii/LeetSync)** and similar tools. Many of those no longer work after LeetCode changed their pages and APIs, and several do not support leetcode.cn. SyncLeetcode targets the current sites and works on **leetcode.com** and **leetcode.cn** .
 
+<p align="center">
+  <img src="docs/intro-overview.png" width="780" alt="Extension popup over a GitHub repo: last sync, stats, and auto-generated README with badges and activity chart" />
+</p>
 
 ## Features
 
