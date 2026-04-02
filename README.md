@@ -4,6 +4,8 @@
 
 # SyncLeetcode
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 **When your run is Accepted on LeetCode, your code syncs to GitHub.**
 
 [![Chrome MV3](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/mv3/)
